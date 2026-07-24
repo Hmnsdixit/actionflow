@@ -1,67 +1,61 @@
 # ActionFlow — Project Structure
 
-Status: Finalized Day 2 — scaffolded exactly this way on Day 3.
+Status: Updated end of Day 3 to reflect the actual scaffolded project (corrected from an initial nesting issue — see `DAY3-SUMMARY.md`).
 
-## Folder Tree
+## Folder Tree (actual, as of Day 3)
 
 ```
-actionflow/
+actionflow/                       # true project + repo root
 ├── app/
-│   ├── layout.tsx              # Root layout, global styles, nav shell
-│   ├── page.tsx                 # Landing/marketing page (or redirect to /login)
-│   ├── signup/
-│   │   └── page.tsx             # Sign up screen
+│   ├── layout.tsx                # Root layout — renders Navbar + page content
+│   ├── page.tsx                  # Homepage ("ActionFlow is Ready!")
+│   ├── globals.css               # Tailwind base styles
+│   ├── favicon.ico
 │   ├── login/
-│   │   └── page.tsx             # Log in screen
+│   │   └── page.tsx              # Login form shell (wired Day 4)
+│   ├── signup/
+│   │   └── page.tsx              # Signup form shell (wired Day 4)
 │   ├── dashboard/
-│   │   └── page.tsx             # Main dashboard (meetings list + aggregated action items)
-│   ├── new-meeting/
-│   │   └── page.tsx             # Paste-notes form
-│   ├── meetings/
-│   │   └── [id]/
-│   │       └── page.tsx         # Single meeting result/detail page
-│   └── api/
-│       ├── process-meeting/
-│       │   └── route.ts         # POST — calls Claude, saves meeting + action items
-│       ├── meetings/
-│       │   ├── route.ts         # GET — list meetings
-│       │   └── [id]/route.ts    # GET — single meeting detail
-│       └── action-items/
-│           ├── route.ts         # GET — aggregated action items
-│           └── [id]/route.ts    # PATCH — toggle status
+│   │   └── page.tsx              # Placeholder (built Day 6)
+│   └── new-meeting/
+│       └── page.tsx              # Placeholder (built Day 5)
+├── components/
+│   └── Navbar.tsx                # Shared navigation, present on every page via layout.tsx
 ├── lib/
-│   ├── supabase.ts               # Configured Supabase client (browser + server variants)
-│   └── claude.ts                 # Claude API helper (builds prompt, calls API, parses JSON)
-├── middleware.ts                  # Redirects unauthenticated users away from protected routes
-├── docs/                          # All Day 2 design docs (this file and its siblings)
+│   └── supabase.ts               # Configured Supabase browser client
+├── docs/                         # All planning + design docs (versioned with the code)
 │   ├── ARCHITECTURE.md
 │   ├── SCHEMA.md
 │   ├── API.md
 │   ├── UI-WIREFRAMES.md
-│   └── PROJECT-STRUCTURE.md
-├── public/                        # Static assets (favicon, etc.)
-├── .env.local                     # Local secrets (never committed)
+│   ├── PROJECT-STRUCTURE.md      # (this file)
+│   ├── SETUP.md
+│   ├── ENVIRONMENT.md
+│   └── DAY3-SUMMARY.md
+├── public/                       # Static assets
+├── node_modules/                 # Installed dependencies (git-ignored)
+├── .env.local                    # Local secrets (git-ignored)
 ├── .gitignore
+├── next.config.ts
+├── tsconfig.json
+├── eslint.config.mjs
+├── postcss.config.mjs
 ├── package.json
+├── package-lock.json
 └── README.md
 ```
 
-## Why This Structure
+## What Changed vs. the Day 2 Version
 
-- **`app/` mirrors the URL structure** (Next.js App Router convention) — every route in the UI Flow doc maps to exactly one folder here, so there's never ambiguity about "where does this screen live."
-- **`app/api/` keeps the backend colocated with the frontend** — no separate server/repo to manage, consistent with the architecture decision to use Next.js for both layers.
-- **`lib/` isolates external service logic** (Supabase, Claude) from UI code — pages import from `lib/`, never talk to Supabase or Claude directly with inline credentials, making it easy to change either service later without touching every page.
-- **`middleware.ts` centralizes auth protection** in one file rather than repeating a login check on every page.
-- **`docs/`** keeps all planning artifacts inside the repo itself, versioned alongside the code — anyone (including a future AI session) can open the repo and immediately find the architecture, schema, and API contracts.
+- No structural changes to the *plan* — the API route folders (`app/api/...`) are simply not created yet because Day 3 is Setup only; they arrive Day 4–6 exactly as originally planned.
+- One real-world correction: the project was briefly, incorrectly nested one level deep (`actionflow/app/` contained a second, duplicate Next.js project). This was caught via the `package-lock.json` warning and fixed by moving all Next.js files up to the true repository root. The structure now matches the Day 2 design exactly.
+- `middleware.ts` is still pending — scheduled for Day 4 when real authentication logic is added (per Blueprint).
 
-## Where Future Code Lands (day-by-day)
+## Where Future Code Lands (unchanged from Day 2 plan)
 
 | Day | Adds to |
 |---|---|
-| 3 | `app/page.tsx`, `lib/supabase.ts`, base scaffold |
-| 4 | `app/signup/`, `app/login/`, `middleware.ts` |
-| 5 | `app/new-meeting/`, `app/api/process-meeting/`, `app/meetings/[id]/`, `lib/claude.ts` |
-| 6 | `app/dashboard/`, `app/api/meetings/`, `app/api/action-items/` |
-| 7 | Search additions inside `app/dashboard/page.tsx` + `app/api/meetings/route.ts` (query param) |
-
-No new top-level folders are expected after Day 6 — Days 7–10 only edit files within this structure.
+| 4 | Auth logic inside `app/login/`, `app/signup/`, new `middleware.ts` |
+| 5 | `app/api/process-meeting/`, `lib/claude.ts`, real content in `app/new-meeting/` and new `app/meetings/[id]/` |
+| 6 | `app/api/meetings/`, `app/api/action-items/`, real content in `app/dashboard/` |
+| 7 | Search/polish edits within existing files — no new top-level folders |
