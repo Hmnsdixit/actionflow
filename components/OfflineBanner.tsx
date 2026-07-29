@@ -27,7 +27,10 @@ export default function OfflineBanner() {
   if (!isOffline) return null
 
   return (
-    <div role="status" className="bg-amber-500 text-white text-sm text-center py-2 px-4">
+    <div
+      role="status"
+      className="sticky top-0 z-20 bg-amber-500 text-white text-sm text-center py-2 px-4"
+    >
       You&apos;re offline. Some features like AI processing won&apos;t work until your connection is restored.
     </div>
   )
