@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SkipLink from "@/components/SkipLink";
+import OfflineBanner from "@/components/OfflineBanner";
 
 export const metadata: Metadata = {
   title: "ActionFlow",
@@ -12,8 +14,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" data-scroll-behavior="smooth">
       <body className="min-h-screen flex flex-col">
+        <SkipLink />
+        <OfflineBanner />
         <Navbar />
-        <div className="flex-1">{children}</div>
+        <div id="main-content" className="flex-1">
+          {children}
+        </div>
         <Footer />
       </body>
     </html>
