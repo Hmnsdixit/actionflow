@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { processMeetingNotes } from '@/lib/groq'
+import { processMeetingNotes, GroqError } from '@/lib/groq'
 
 export async function POST(request: Request) {
   const supabase = await createClient()
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
   }
 
   const rawNotes = (body.raw_notes ?? '').trim()
-  const title = (body.title ?? '').trim() || 'Untitled Meeting'
+  const title = (body.title ?? '').trim().slice(0, 200) || 'Untitled Meeting'
 
   if (!rawNotes || rawNotes.length < 10) {
     return NextResponse.json(
@@ -41,7 +41,17 @@ export async function POST(request: Request) {
   try {
     processed = await processMeetingNotes(rawNotes)
   } catch (err) {
-    console.error('Groq processing failed:', err)
+    if (err instanceof GroqError) {
+      console.error(`Groq processing failed [${err.kind}]:`, err.message)
+      // Rate limit and provider errors are worth surfacing distinctly to the user;
+      // everything else stays generic to avoid leaking internal details.
+      const userMessage =
+        err.kind === 'rate_limit'
+          ? err.message
+          : 'AI processing failed. Please try again in a moment.'
+      return NextResponse.json({ error: userMessage }, { status: err.status })
+    }
+    console.error('Unexpected error during AI processing:', err)
     return NextResponse.json(
       { error: 'AI processing failed. Please try again in a moment.' },
       { status: 502 }
@@ -61,7 +71,10 @@ export async function POST(request: Request) {
 
   if (insertError || !meeting) {
     console.error('Failed to save meeting:', insertError)
-    return NextResponse.json({ error: 'Failed to save meeting.' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'The AI processed your notes, but saving them failed. Please try again.' },
+      { status: 500 }
+    )
   }
 
   if (processed.action_items.length > 0) {
@@ -74,6 +87,8 @@ export async function POST(request: Request) {
 
     if (actionItemsError) {
       console.error('Failed to save action items:', actionItemsError)
+      // Meeting itself saved successfully; action items failing is logged but non-fatal —
+      // the user still gets their meeting and summary, just without extracted items.
     }
   }
 

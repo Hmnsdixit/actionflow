@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Alert from '@/components/Alert'
 
+const MAX_CHARS = 20000
+
 export default function NewMeetingPage() {
   const router = useRouter()
   const [title, setTitle] = useState('')
@@ -11,9 +13,16 @@ export default function NewMeetingPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  const overLimit = rawNotes.length > MAX_CHARS
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
+
+    if (overLimit) {
+      setError('Maximum 20,000 characters allowed.')
+      return
+    }
 
     if (rawNotes.trim().length < 10) {
       setError('Please paste at least a few sentences of meeting notes.')
@@ -29,7 +38,14 @@ export default function NewMeetingPage() {
         body: JSON.stringify({ title, raw_notes: rawNotes }),
       })
 
-      const data = await res.json()
+      let data: { error?: string; meeting_id?: string }
+      try {
+        data = await res.json()
+      } catch {
+        setError('Unexpected response from the server. Please try again.')
+        setLoading(false)
+        return
+      }
 
       if (!res.ok) {
         setError(data.error || 'Something went wrong. Please try again.')
@@ -64,6 +80,7 @@ export default function NewMeetingPage() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="e.g. Weekly Sync"
+            maxLength={200}
             className="w-full border rounded-md px-3 py-2 transition focus:border-indigo-900"
             disabled={loading}
           />
@@ -76,19 +93,32 @@ export default function NewMeetingPage() {
           <textarea
             id="notes"
             value={rawNotes}
-            onChange={(e) => setRawNotes(e.target.value)}
+            onChange={(e) => setRawNotes(e.target.value.slice(0, MAX_CHARS))}
             placeholder="Paste your raw, messy meeting notes here..."
             rows={14}
+            maxLength={MAX_CHARS}
+            aria-describedby="char-count"
+            aria-invalid={overLimit}
             className="w-full border rounded-md px-3 py-2 font-mono text-sm transition focus:border-indigo-900"
             disabled={loading}
           />
-          <p className="text-xs text-gray-400 mt-1">{rawNotes.length} / 20,000 characters</p>
+          <p
+            id="char-count"
+            className={`text-xs mt-1 ${overLimit ? 'text-red-600 font-semibold' : 'text-gray-400'}`}
+          >
+            {rawNotes.length.toLocaleString()} / {MAX_CHARS.toLocaleString()} characters
+          </p>
+          {overLimit && (
+            <p role="alert" className="text-xs text-red-600 font-medium mt-1">
+              Maximum 20,000 characters allowed.
+            </p>
+          )}
         </div>
 
         <button
           type="submit"
-          disabled={loading}
-          className="w-full bg-indigo-900 text-white py-3 rounded-md font-medium hover:bg-indigo-800 active:bg-indigo-950 disabled:opacity-60 transition flex items-center justify-center gap-2"
+          disabled={loading || overLimit}
+          className="w-full bg-indigo-900 text-white py-3 rounded-md font-medium hover:bg-indigo-800 active:bg-indigo-950 disabled:opacity-60 disabled:cursor-not-allowed transition flex items-center justify-center gap-2"
         >
           {loading ? (
             <>
