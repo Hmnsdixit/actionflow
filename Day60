@@ -1,0 +1,77 @@
+# 🚀 Day 60: Graduation Day – Shipping ActionFlow v1.0.0 🎓
+
+## 🎉 AB Talks 60-Day Claude AI Challenge Completed!
+
+After **60 days of continuous learning** and a **10-day AI Capstone Sprint**, I'm proud to announce the completion and release of **ActionFlow v1.0.0** — my first production-ready AI-powered web application.
+
+## 🌟 Project: ActionFlow
+
+**ActionFlow** is an AI-powered meeting assistant that transforms messy meeting notes into structured summaries and actionable tasks, helping users stay organized across all their meetings.
+
+## ✨ Features
+
+* 🤖 AI-powered meeting summarization
+* ✅ Automatic action item extraction
+* 📊 Unified dashboard for meetings & tasks
+* 🔍 Search past meetings
+* 🔐 Secure authentication with Supabase
+* 📡 Offline detection
+* ♿ Accessibility improvements
+* 🚀 Production deployment on Vercel
+
+## 🛠 Tech Stack
+
+* Next.js (App Router)
+* TypeScript
+* Tailwind CSS
+* Supabase
+* PostgreSQL
+* Groq API (Llama 3.3 70B)
+* Vercel
+
+## 📚 What I Learned
+
+This challenge helped me gain practical experience in:
+
+* AI Fundamentals
+* Prompt Engineering
+* Product Thinking
+* Full Software Development Lifecycle (SDLC)
+* AI-assisted Development
+* Authentication & Database Design
+* Debugging Real Applications
+* Deployment & Production Readiness
+* Git & GitHub Best Practices
+
+The 10-day capstone tied everything together—from planning and architecture to implementation, testing, deployment, documentation, and release.
+
+## 🔗 Links
+
+**🌐 Live Demo:**
+[https://actionflow-sand.vercel.app](https://actionflow-sand.vercel.app)
+
+**💻 GitHub Repository:**
+[https://github.com/Hmnsdixit/actionflow](https://github.com/Hmnsdixit/actionflow)
+
+## 🙏 Acknowledgements
+
+A heartfelt thank you to **AB Talks** for organizing this incredible learning journey and to **Claude AI** for being my AI pair programmer and mentor throughout the capstone.
+
+## 🎯 Version Released
+
+**🏷️ ActionFlow v1.0.0**
+
+This marks the completion of the AB Talks 60-Day Claude AI Challenge and the beginning of my journey toward building more impactful AI-powered applications.
+
+---
+
+### ⭐ If you like this project
+
+* Star the repository ⭐
+* Explore the code
+* Share your feedback
+* Feel free to contribute
+
+---
+
+**"The challenge may be complete, but the journey of building has just begun."** 🚀
